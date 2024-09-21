@@ -141,23 +141,31 @@ int main(int argc, char *argv[]) {
 #endif
 
   if ((cptr = getenv("NMAP_ARGS"))) {
+	  /*从环境变量中取nmap参数*/
     if (Snprintf(command, sizeof(command), "nmap %s", cptr) >= (int) sizeof(command)) {
         error("Warning: NMAP_ARGS variable is too long, truncated");
     }
+
+    /*合入命令行提供的参数*/
     /* copy rest of command-line arguments */
     for (i = 1; i < argc && strlen(command) + strlen(argv[i]) + 1 < sizeof(command); i++) {
       strcat(command, " ");
       strcat(command, argv[i]);
     }
+
+    /*解析nmap命令行*/
     myargc = arg_parse(command, &myargv);
     if (myargc < 1) {
       fatal("NMAP_ARGS variable could not be parsed");
     }
+
+    /*执行nmap_main*/
     ret = nmap_main(myargc, myargv);
     arg_parse_free(myargv);
     return ret;
   }
 
+  /*处理nmap --resume xx命令*/
   if (argc == 3 && strcmp("--resume", argv[1]) == 0) {
     /* OK, they want to resume an aborted scan given the log file specified.
        Lets gather our state from the log file */
@@ -168,5 +176,6 @@ int main(int argc, char *argv[]) {
     return nmap_main(myargc, myargv);
   }
 
+  /*处理其它样式的命令*/
   return nmap_main(argc, argv);
 }

@@ -150,6 +150,7 @@ static void display_nmap_version();
 /* A mechanism to save argv[0] for code that requires that. */
 static const char *program_name = NULL;
 
+/*设置程序名称*/
 void set_program_name(const char *name) {
   program_name = name;
 }
@@ -517,6 +518,7 @@ void parse_options(int argc, char **argv) {
   int k[]={1869377401,1851876211,0,1380271436,1243633999,1229672005,555832142,2593,1847618415,1818584937};
 #endif
 
+  /*支持的所有长选项*/
   struct option long_options[] = {
     {"version", no_argument, 0, 'V'},
     {"verbose", no_argument, 0, 'v'},
@@ -1797,6 +1799,7 @@ void nmap_free_mem() {
   nsock_set_default_engine(NULL);
 }
 
+/*nmap实际入口*/
 int nmap_main(int argc, char *argv[]) {
   int i;
   std::vector<Target *> Targets;
@@ -1839,10 +1842,12 @@ int nmap_main(int argc, char *argv[]) {
   }
 
   if (argc < 2){
+	  /*nmap参数过少，报错*/
     printusage();
     exit(-1);
   }
 
+  /*初始化100个空间*/
   Targets.reserve(100);
 #ifdef WIN32
   win_pre_init();
